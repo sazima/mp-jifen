@@ -1,0 +1,331 @@
+<template>
+  <div class="container">
+    <div class="detail-header">
+      <div class="detail-header-inner">
+        <!--        <div class="header-tag">个人资料</div>-->
+        <div v-if="false" class="detail-header-tag" @click="switchUser">切换</div>
+        <van-image class="detail-header-avatar" :src="detailData.image " alt="" @click="goPage('/profile')"/>
+        <div class="detail-header-info">
+          <div class="detail-header-nick van-ellipsis detail-mb10">
+            {{ detailData.nickname || `还没有昵称` }}
+          </div>
+          <div class="detail-header-sub">
+          </div>
+        </div>
+      </div>
+      <div class="detail-header-bg">
+        <div class="detail-header-bg-wave">
+<!--          <MineSvgWaveBg/>-->
+        </div>
+      </div>
+    </div>
+    <div class="main">
+      <div class="detail-group"></div>
+      <!-- 我的钱包 -->
+      <div class="detail-group">
+        <div class="detail-count-list">
+
+          <div class="detail-count-list-item" @click="goPage('/integral', {type: 'total'})">
+            <div class="detail-count-list-item-value">{{ detailData.score }}</div>
+            <div class="detail-count-list-item-label">积分</div>
+          </div>
+
+          <div class="detail-count-list-item" @click="goPage('/integral?',  {type: 'signIn'})">
+            <div class="detail-count-list-item-value">{{ detailData.signIn }}</div>
+            <div class="detail-count-list-item-label">签到</div>
+          </div>
+
+          <div class="detail-count-list-item" @click="goPage('/exchange')">
+            <div class="detail-count-list-item-value">{{ detailData.exchange }}</div>
+            <div class="detail-count-list-item-label">兑换</div>
+          </div>
+<!--          <div class="detail-count-list-item" @click="goPage('/card')">-->
+<!--            <div class="detail-count-list-item-value">{{ detailData.card }}</div>-->
+<!--            <div class="detail-count-list-item-label">卡片</div>-->
+<!--          </div>-->
+
+        </div>
+      </div>
+      <!-- 常用功能 -->
+      <div class="detail-group">
+        <div class="detail-group-header van-hairline--bottom">
+          <div class="detail-group-header-hd">管理</div>
+        </div>
+        <div class="detail-tool-list">
+<!--          <div v-for="(item, index) in toolList" :key="index" class="detail-tool-list-item" @click="goPage(item.path)">-->
+            <div v-for="(item, index) in toolList" :key="index" class="detail-tool-list-item" @click="goPage(item.path)">
+            <van-icon class="detail-tool-list-item-icon" :name="item.icon" :badge="item.count"/>
+            <div class="detail-tool-list-item-title">{{ item.title }}</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <!--    &lt;!&ndash; 版权 &ndash;&gt;-->
+    <!--    <Copyright />-->
+    <!-- 底部导航栏 -->
+    <Tabbar/>
+  </div>
+</template>
+
+<script>
+import Tabbar from '@/page/tabbar/Index.vue'
+import Plate from '@/page/Plate/index.vue'
+import {getUserInfo, setToken, cleanToken} from '../../utils/authUtils'
+import API_USER from '@/apis/user'
+export default {
+  name: 'index',
+  components: { Tabbar, Plate },
+  data() {
+    return {
+      detailData: {},
+      toolList: [
+        {icon: 'shop-o', title: '商品', path: '/admin/productList'},
+        {icon: 'like-o', title: '积分任务', path: '/admin/taskList'},
+        {icon: 'orders-o', title: '申请列表', path: '/admin/apply'},
+        {icon: 'newspaper-o', title: '海报', path: '/admin/brand'},
+      ]
+    }
+  },
+  beforeMount() {
+    this.getDetail()
+  },
+  methods: {
+    getDetail() {
+      API_USER.detail()
+          .then(res => {
+            this.detailData = res
+          })
+    },
+    switchUser() {
+      API_USER.switchAccount()
+          .then(res => {
+            console.log(res)
+            setToken(res)
+                .then(() => {
+                  this.getDetail()
+                })
+          })
+    },
+    goPage(path, query) {
+      this.$router.push({path, query});
+    }
+  }
+}
+</script>
+
+<style lang="less" >
+@import '/src/styles/variable.less';
+.style-box() {
+  box-sizing: border-box;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.detail-header {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  height: 180px;
+  color: #fff;
+  //background-color: var(--brand-color);
+  background-color: #ff5179;
+  overflow: hidden;
+
+  &-bg {
+    box-sizing: border-box;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+
+    &-wave {
+      position: absolute;
+      left: 0;
+      bottom: -20px;
+      width: 100%;
+    }
+  }
+
+  &-inner {
+    box-sizing: border-box;
+    position: absolute;
+    top: 30px;
+    width: 100%;
+    padding: 0 15px;
+    display: flex;
+    align-items: center;
+    z-index: 20;
+  }
+
+  &-tag {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    box-sizing: border-box;
+    width: auto;
+    padding: 2px 8px;
+    color: #fff;
+    font-size: 12px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 10px 0 0 10px;
+    z-index: 20;
+
+    &-icon {
+      margin-right: 5px;
+    }
+  }
+
+  &-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 10px;
+
+    &.active {
+      transform: rotate(666turn);
+      transition-delay: 1s;
+      transition-property: all;
+      transition-duration: 60s;
+      transition-timing-function: cubic-bezier(0.34, 0, 0.84, 1);
+    }
+  }
+
+  &-nick {
+    font-size: 20px;
+    max-width: 200px;
+    height: 30px;
+    line-height: 30px;
+  }
+
+  &-sub {
+    font-size: 12px;
+    line-height: 24px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+
+    &-item {
+      display: flex;
+      align-items: center;
+
+      &-separate {
+        display: inline-flex;
+        margin: 0 5px 0 5px;
+      }
+
+      &-icon {
+        margin-right: 5px;
+      }
+    }
+  }
+}
+
+.detail-mb10 {
+  margin-bottom: 10px;
+}
+
+.detail-group {
+  .style-box();
+  margin: 0 15px 15px 15px;
+
+  &-inner {
+    padding: 10px 0;
+  }
+}
+
+.detail-group {
+  &-header {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    height: 48px;
+    padding: 0 15px;
+
+    &-hd {
+      //color: var(--gray-color-8);
+      color: #323233;
+      text-align: left;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    &-bd {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      font-size: 12px;
+      color: #969799;
+    }
+
+    &-arrow {
+      margin-left: 2px;
+      font-size: 14px;
+    }
+  }
+}
+
+.detail-tool {
+  &-list {
+    box-sizing: border-box;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+
+    &-item {
+      box-sizing: border-box;
+      width: 25%;
+      text-align: center;
+      padding: 10px 0;
+
+      .van-icon {
+        font-size: 24px;
+        margin-bottom: 5px;
+      }
+
+      &-title {
+        color: var(--gray-color-8);
+        font-size: 12px;
+      }
+    }
+  }
+}
+
+
+.detail-count {
+  &-list {
+    box-sizing: border-box;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+
+    &-item {
+      box-sizing: border-box;
+      flex: 1;
+      padding: 10px 0;
+      text-align: center;
+
+      &-value {
+        font-size: 16px;
+        font-weight: bold;
+        color: #141414;
+        margin-bottom: 10px;
+      }
+
+      &-label {
+        font-size: 12px;
+        color: var(--gray-color-7);
+      }
+    }
+  }
+}
+</style>
