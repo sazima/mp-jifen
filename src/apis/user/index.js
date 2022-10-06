@@ -2,7 +2,7 @@ import request from "../request";
 
 export function login(data) {
   return request({
-    url: `/api/user/login`,
+    url: `/mp-api/user/login`,
     method: 'post',
     data: data,
   });
@@ -10,28 +10,42 @@ export function login(data) {
 
 export function loginMiniApp(data) {
   return request({
-    url: `/api/user/loginMiniApp`,
+    url: `/mp-api/user/loginMiniApp`,
     method: 'get',
     params: data,
   });
 }
 export function detail() {
   return request({
-    url: `/api/user/detail`,
+    url: `/mp-api/user/detail`,
     method: 'get'
   });
 }
 export function edit(data) {
   return request({
-    url: `/api/user/edit`,
+    url: `/mp-api/user/edit`,
+    method: 'post',
+    data: data
+  });
+}
+export function bind(data) {
+  return request({
+    url: `/mp-api/user/bind`,
     method: 'post',
     data: data
   });
 }
 
+export function getPartnerDetail() {
+  return request({
+    url: `/mp-api/user/partnerDetail`,
+    method: 'get'
+  });
+}
+
 export function switchAccount(data) {
   return request({
-    url: `/api/user/switch`,
+    url: `/mp-api/user/switch`,
     method: 'post',
     data: data,
   });
@@ -41,5 +55,7 @@ export default {
   detail,
   edit,
   switchAccount,
-  loginMiniApp
+  loginMiniApp,
+  getPartnerDetail,
+  bind
 }

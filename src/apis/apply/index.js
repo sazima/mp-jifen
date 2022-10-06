@@ -3,7 +3,7 @@ import request from "../request";
 
 export function applyUse(data) {
   return request({
-    url: `/api/apply/`,
+    url: `/mp-api/apply/`,
     method: 'post',
     data: data,
   });
@@ -11,7 +11,7 @@ export function applyUse(data) {
 
 export function listApply(params) {
   return request({
-    url: `/api/apply/`,
+    url: `/mp-api/apply/`,
     method: 'get',
     params: params,
   });
@@ -20,7 +20,7 @@ export function listApply(params) {
 
 export function check(data) {
   return request({
-    url: `/api/apply/check`,
+    url: `/mp-api/apply/check`,
     method: 'post',
     data: data,
   });

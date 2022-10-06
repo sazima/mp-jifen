@@ -27,7 +27,7 @@
           </van-card>
           <template #right>
             <van-button square text="删除" type="danger" class="delete-button"
-                        style="top: 50%; transform: translate(0, -90%)" @click="del(item)"/>
+                        style="top: 50%; transform: translate(0, -90%)" @click="del(item.id)"/>
           </template>
         </van-swipe-cell>
       </van-list>
@@ -105,15 +105,14 @@
           <van-button round block type="primary" native-type="submit" @click="submit">
             提交
           </van-button>
-          <van-button v-if="false" round block type="danger" native-type="submit" @click="submit">
+        </div>
+        <div style="margin: 16px;">
+          <van-button round block type="danger" native-type="submit" @click="del(form.id)" >
             删除
           </van-button>
         </div>
       </van-form>
-
     </van-action-sheet>
-
-
     <Tabbar/>
 
   </div>
@@ -122,6 +121,7 @@
 <script>
 import Tabbar from '@/page/tabbar/Index.vue'
 import API_PRODUCT from '@/apis/product'
+import API_USER from '@/apis/user'
 import { Dialog, Toast } from 'vant'
 import {getUserInfo, setToken, cleanToken} from '../../../utils/authUtils'
 
@@ -145,7 +145,14 @@ export default {
         productName: '',
         score: 1,
         num: 1,
-        image: [],
+        image: [
+          {
+            id: 'image',
+            name: '图片',
+            url: '', //这个url请求后台获取二进制流文件，使图片可以回显出来
+            file: ''
+          }
+        ],
         filePath: '',
       },
       list: [],
@@ -160,7 +167,7 @@ export default {
     },
     edit(item) {
       const imageItem = {
-        id: item.image,
+        id: 'image',
         name: '图片',
         url: item.image, //这个url请求后台获取二进制流文件，使图片可以回显出来
         // file: new File([], item.productName, {}) //就是这个new File([], item.attachmentName, {}),有他就可以回显文件名称了
@@ -179,6 +186,7 @@ export default {
         desc: item.desc,
         image: [imageItem],
       }
+      console.log(imageItem)
       console.log('form' + this.form.preview_cover)
       this.tableTitle = '修改'
       this.showEditTable = true
@@ -186,13 +194,31 @@ export default {
     clickPreview() {
     },
     add() {
-      this.form = {}
+      API_USER.getPartnerDetail()
+          .then(res => {
+            console.log(res)
+            const { hasPartner, nickName, image, score } = res
+            if (hasPartner) {
+              this.tableTitle = '添加的商品出现在对方积分兑换列表中'
+            } else {
+
+              this.tableTitle = '添加的商品出现在自己积分兑换列表中'
+            }
+          })
+      this.form = {
+        image: [
+          {
+            id: 'image',
+            name: '图片',
+            url: '', //这个url请求后台获取二进制流文件，使图片可以回显出来
+            file: ''
+          }]
+      }
       this.form.status = 0
-      this.tableTitle = '添加'
       this.showEditTable = true
     },
-    del(item) {
-      let id = item.id
+    del(id) {
+      // let id = item.id
       Dialog.confirm({
         title: '确定删除吗？',
       })
@@ -213,8 +239,10 @@ export default {
       const baseUrl = process.env.VUE_APP_BASE_URL
       console.log(data)
       if (data.filePath) {
+        const url = baseUrl + '/mp-api/admin/product/miniAppEditOrCreate?token=' + token
+        console.log('upload url ' + url)
         wx.uploadFile({
-          url: baseUrl + '/api/admin/product/miniAppEditOrCreate?token=' + token, //上传地址
+          url: baseUrl + '/mp-api/admin/product/miniAppEditOrCreate?token=' + token, //上传地址
           filePath: data.filePath,//上传图片路径
           name: 'file',
           formData: data,
@@ -287,10 +315,14 @@ export default {
             console.log(res.tempFiles[0])
             that.form.filePath = res.tempFiles[0].path
             that.form.image = [{
-              id: res.tempFiles[0].path,
+              id: 'image',
               name: '图片',
               url: res.tempFiles[0].path, //这个url请求后台获取二进制流文件，使图片可以回显出来
+              file: ''
             }]
+            that.$set(that.form.image[0], `url`, res.tempFiles[0].path)
+            // that.form.image[0].url = res.tempFiles[0].path
+            console.log(that.form.image)
           }
         },
       })
@@ -300,6 +332,7 @@ export default {
 </script>
 
 <style lang="less">
+
 .van-card__thumb {
   width: 88px;
   height: 88px;

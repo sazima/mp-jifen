@@ -13,7 +13,9 @@ const mpPluginConfig = require('./miniprogram.config.js') // 插件配置
 const isDevelop = process.env.NODE_ENV === 'development'
 const isOptimize = true // 是否压缩业务代码，开发者工具可能无法完美支持业务代码使用到的 es 特性，建议自己做代码压缩
 
-const  VUE_APP_BASE_URL = 'https://t.wktadmin.com:11111'
+// const  VUE_APP_BASE_URL = 'https://t.wktadmin.com:11111'
+const  VUE_APP_BASE_URL = 'https://iot.liuxianyu.cn'
+// const  VUE_APP_BASE_URL = 'http://192.168.1.11:8082'
 
 module.exports = {
   mode: 'production',

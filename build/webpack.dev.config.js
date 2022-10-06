@@ -6,8 +6,8 @@ const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const portfinder = require('portfinder')
 const autoprefixer = require('autoprefixer')
 const {VueLoaderPlugin} = require('vue-loader')
-const  VUE_APP_BASE_URL = 'https://t.wktadmin.com:11111'
-// const  VUE_APP_BASE_URL = 'http://127.0.0.1:8082'
+// const  VUE_APP_BASE_URL = 'https://t.wktadmin.com:11111'
+const  VUE_APP_BASE_URL = 'http://127.0.0.1:8082'
 const devWebpackConfig = merge(baseWebpackConfig, {
   mode: 'development',
   devServer: {

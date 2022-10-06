@@ -59,7 +59,7 @@ export default {
       brandList: [{
         id: 204167,
         linkUrl: '',
-        url: 'https://dcdn.it120.cc/2022/02/02/d0442c95-cd44-435a-888d-2539c5399334.png',
+        url: 'https://i.imgtg.com/2022/10/05/pWHcx.png',
         type: 'image',
         title: 'b',
       }],
@@ -129,7 +129,7 @@ export default {
     margin-bottom: 10px;
     margin-left: 15px;
     margin-right: 15px;
-    background: var(--white);
+    background: #fff;
     box-shadow: 0px 2px 4px 2px rgba(228, 228, 228, 0.5);
 
     //.sigin-list-item-bd {
@@ -152,18 +152,18 @@ export default {
 
       .sigin-list-item-bd-title {
         font-size: 16px;
-        color: var(--gray-color-8);
+        color: #323233;
       }
 
       .sigin-list-item-bd-txt {
         font-size: 12px;
-        color: var(--gray-color-6);
+        color: #969799;
       }
 
       .sigin-list-item-bd-action {
         font-size: 10px;
         color: var(--red-color);
-        border: 1px solid var(--red-color);
+        border: 1px solid #ee0a24;
         border-radius: 15px;
         padding: 5px 10px;
         position: absolute;

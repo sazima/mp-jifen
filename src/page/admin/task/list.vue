@@ -18,7 +18,7 @@
         </div>
       </div>
       <template #right>
-        <van-button square type="danger" text="删除" style="height: 100%" @click="del(item)"/>
+        <van-button square type="danger" text="删除" style="height: 100%" @click="del(item.id)"/>
         <!--        <van-button square type="primary" text="收藏" style="height: 100%"/>-->
       </template>
     </van-swipe-cell>
@@ -59,6 +59,11 @@
             提交
           </van-button>
         </div>
+        <div style="margin: 16px;">
+          <van-button round block type="danger" native-type="submit" @click="del(form.id)">
+            删除
+          </van-button>
+        </div>
       </van-form>
 
     </van-action-sheet>
@@ -74,6 +79,7 @@ import Tabbar from '@/page/tabbar/Index.vue'
 import { Dialog } from 'vant'
 import { Toast } from 'vant'
 import API_TASK from '@/apis/task'
+import API_USER from '@/apis/user'
 
 export default {
   name: 'list',
@@ -110,12 +116,10 @@ export default {
     },
     getList() {
       // cordova.plugins.notification.local.schedule({title:"标题",text:"内容",foreground:true});
-      console.log('get list')
       API_TASK.adminTaskList()
           .then(res => {
             const data = res
             this.list = data
-            console.log(res)
           })
     },
     edit(item) {
@@ -129,14 +133,20 @@ export default {
       this.showEditTable = true
     },
     add() {
+      API_USER.getPartnerDetail()
+          .then(res => {
+            const { hasPartner, nickName, image, score } = res
+            if (hasPartner) {
+              this.tableTitle = '添加的任务出现在对方赚积分列表中'
+            } else {
+              this.tableTitle = '添加的任务出现在自己赚积分列表中'
+            }
+          })
       this.form = {}
       this.form.status = 0
-      this.tableTitle = '添加'
       this.showEditTable = true
     },
-    del(item) {
-      console.log(item)
-      let id = item.id
+    del(id) {
       Dialog.confirm({
         title: '确定删除吗？',
       })
@@ -175,7 +185,7 @@ export default {
 }
 </script>
 
-<style lang="less" >
+<style lang="less">
 
 .admin-task-list-item {
   overflow: hidden;

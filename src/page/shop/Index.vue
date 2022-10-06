@@ -70,7 +70,7 @@ export default {
       brandList: [{
         id: 204167,
         linkUrl: '',
-        url: 'https://dcdn.it120.cc/2022/02/02/d0442c95-cd44-435a-888d-2539c5399334.png',
+        url: 'https://i.imgtg.com/2022/10/05/pWHcx.png',
         type: 'image',
         title: 'b',
       }],

@@ -23,7 +23,6 @@ request.interceptors.request.use(
   },
   error => {
     // do something with request error
-    console.log(error) // for debug
     return Promise.reject(error)
   },
 )
@@ -49,8 +48,6 @@ request.interceptors.response.use(
     if (res.code !== 0) {
       if (res.code === 2000) {
         cleanToken()
-        console.log('process.env.isMiniprogram' )
-        console.log(process.env.isMiniprogram)
         if (process.env.isMiniprogram) {
           wx.login({
             success: (res) => {
