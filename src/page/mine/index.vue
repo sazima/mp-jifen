@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" @click="clientMain">
     <div class="detail-header">
       <div class="detail-header-inner">
         <div v-if="false" class="detail-header-tag" @click="switchUser">切换</div>
@@ -39,7 +39,7 @@
           </div>
           <div class="detail-count-list-item" @click="showPartnerButton">
             <div class="detail-count-list-item-value">{{ detailData.partner }}</div>
-            <div class="detail-count-list-item-label">对象</div>
+            <div class="detail-count-list-item-label">{{detailData.partner == 0 ? '点击绑定对象': '对象'}}</div>
 
           </div>
         </div>
@@ -78,7 +78,7 @@
 
       <van-dialog
           use-slot
-          title="绑定对象"
+          title="绑定"
           v-model:show="showShareCode"
           confirm-button-text="绑定"
           show-cancel-button
@@ -113,7 +113,7 @@ import Plate from '@/page/Plate/index.vue'
 import { getUserInfo, setToken, cleanToken } from '../../utils/authUtils'
 import API_USER from '@/apis/user'
 import Clipboard from 'clipboard';
-import { Toast } from 'vant';
+import { Toast, Dialog } from 'vant';
 
 export default {
   name: 'index',
@@ -141,6 +141,32 @@ export default {
     this.getDetail()
   },
   methods: {
+    clientMain() {
+      console.log('clientMain')
+      if (!this.detailData.image) {
+        wx.getUserProfile({
+          desc: '用于完善会员资料', // 声明获取用户个人信息后的用途，后续会展示在弹窗中，请谨慎填写
+          fail: (err) => {
+            console.log(err)
+          },
+          success: (res) => {
+            console.log(res)
+            const avatarUrl = res.userInfo.avatarUrl
+            const nickName = res.userInfo.nickName
+            const formdata = {
+              nickname: nickName,
+              image: [{
+                content: '',
+                url: avatarUrl
+              }]
+            }
+            API_USER.edit(formdata).then(res => {
+              this.getDetail()
+            })
+          },
+        })
+      }
+    },
     getDetail() {
       API_USER.detail()
           .then(res => {
@@ -179,7 +205,16 @@ export default {
         if (hasPartner) {
           this.showPartner = true
         } else {
-          this.showShareCode = true
+          Dialog.alert({
+            title: '提示',
+            message: '绑定对象后:\n' +
+                '1.您添加的[商品]将只会出现在您对象[兑换]列表中\n' +
+                '2.您添加的[任务]会只出现在您对象的[赚积分]列表中\n' +
+                '3.[发现]页将展示您和您对象的动态\n' +
+                '4.同时您对象添加的[商品]和[任务]也会出现在您的列表中'
+          }).then(() => {
+            this.showShareCode = true
+          })
         }
       })
     },

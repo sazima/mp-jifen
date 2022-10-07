@@ -14,6 +14,7 @@ import AdminProductList from '../../page/admin/product/list'
 import AdminTask from '../../page/admin/task/list'
 import AdminApply from '../../page/admin/apply/index'
 import AdminBrand from '../../page/admin/brand/index'
+import ActionHistory from '../../page/action_history/Index'
 
 import Vant from 'vant'
 import '../../styles/index.less';
@@ -90,7 +91,13 @@ const router = new Router({
       path: '/test/(home|index)',
       name: 'HomeTest',
       component: Home,
-    }],
+    },
+    {
+      path: '/action',
+      name: 'ActionHistory',
+      component: ActionHistory,
+    }
+  ],
 })
 
 Vue.use(Vant);

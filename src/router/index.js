@@ -15,6 +15,7 @@ const AdminProductList = () => import(/* webpackChunkName: "Detail" */'@/page/ad
 const AdminTask = () => import(/* webpackChunkName: "Detail" */'@/page/admin/task/list.vue')
 const AdminApply = () => import(/* webpackChunkName: "Detail" */'@/page/admin/apply/index.vue')
 const AdminBrand = () => import(/* webpackChunkName: "Detail" */'@/page/admin/brand/index.vue')
+const actionHistory = () => import(/* webpackChunkName: "Detail" */'@/page/action_history/Index.vue')
 
 Vue.use(Router)
 
@@ -82,10 +83,16 @@ export default new Router({
       path: '/index.html',
       name: 'HomeHtml',
       component: Home,
-    }, {
+    },
+    {
       path: '/test/(home|index)',
       name: 'HomeTest',
       component: Home,
+    },
+    {
+      path: '/action',
+      name: 'ActionHistory',
+      component: actionHistory,
     }
   ],
 })

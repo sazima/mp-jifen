@@ -29,10 +29,15 @@ export default {
           icon: 'home-o',
         },
         {
+          text: '发现',
+          pagePath: '/action',
+          icon: 'star-o'
+        },
+        {
           text: '我的',
           pagePath: '/mine',
           icon: 'contact'
-        }
+        },
       ]
     }
   },
