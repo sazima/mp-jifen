@@ -58,7 +58,9 @@
 <script>
 import Tabbar from '@/page/tabbar/Index.vue'
 import Plate from '@/page/Plate/index.vue'
+import { getProductList, setProductList } from '../../utils/authUtils'
 import API_PRODUCT from '../../apis/product/index'
+
 export default {
   name: 'Index',
   components: { Tabbar ,  Plate},
@@ -77,9 +79,13 @@ export default {
     }
   },
   beforeMount() {
+    this.getListFromCache()
     this.getList()
   },
   methods: {
+    getListFromCache() {
+      this.productList = getProductList()
+    },
     onGoodClicked(id) {
       this.$router.push({path: '/shopDetail', query: {id}});
     },
@@ -87,6 +93,12 @@ export default {
       API_PRODUCT.list()
           .then(res => {
             this.productList = res
+            // if (this.productList.length > 20) {
+              setProductList(this.productList.slice(0, 20))
+            // } else {
+            //   setProductList(this.productList)
+            // }
+
           })
     }
   }

@@ -37,9 +37,9 @@
 
 
     <!--      修改内容-->
-    <van-action-sheet v-model:show="showEditTable" :title="tableTitle" style="height: 100%">
+    <van-action-sheet v-model:if="showEditTable" :title="tableTitle" style="height: 100%">
 
-      <van-form>
+      <van-form ref="form">
         <van-cell-group inset>
           <van-field
               v-model="form.productName"
@@ -162,8 +162,23 @@ export default {
     this.getList()
   },
   methods: {
-    editTable() {
-      this.showEditTable = true
+    initform() {
+      this.form = {
+        id: 0,
+        status: 0,
+        productName: '',
+        score: 1,
+        num: 1,
+        image: [
+          {
+            id: 'image',
+            name: '图片',
+            url: '', //这个url请求后台获取二进制流文件，使图片可以回显出来
+            file: ''
+          }
+        ],
+        filePath: '',
+      }
     },
     edit(item) {
       const imageItem = {
@@ -174,6 +189,7 @@ export default {
         file: '',
       }
       const hasExpireDays = !!item.expireDays
+      this.showEditTable = true
 
       this.form = {
         id: item.id,
@@ -186,10 +202,9 @@ export default {
         desc: item.desc,
         image: [imageItem],
       }
-      console.log(imageItem)
-      console.log('form' + this.form.preview_cover)
+      console.log('form')
+      console.log(this.form)
       this.tableTitle = '修改'
-      this.showEditTable = true
     },
     clickPreview() {
     },
@@ -229,56 +244,78 @@ export default {
             })
                 .then(res => {
                   Toast('删除成功')
+                  this.showEditTable = false
                   this.getList()
                 })
           })
     },
     submit() {
-      const data = this.form
-      const {token} = getUserInfo()
-      const baseUrl = process.env.VUE_APP_BASE_URL
-      console.log(data)
-      if (data.filePath) {
-        const url = baseUrl + '/mp-api/admin/product/miniAppEditOrCreate?token=' + token
-        console.log('upload url ' + url)
-        wx.uploadFile({
-          url: baseUrl + '/mp-api/admin/product/miniAppEditOrCreate?token=' + token, //上传地址
-          filePath: data.filePath,//上传图片路径
-          name: 'file',
-          formData: data,
-          success: res => {
-            console.info(res);
+      this.$refs.form.validate().then(res=> {
+        console.log('this.$refs.form.validate')
+        console.log(res)
+        const data = this.form
+        const {token} = getUserInfo()
+        const baseUrl = process.env.VUE_APP_BASE_URL
+        console.log(data)
+        if (data.image.length === 0) {
+          Toast('无图片')
+          return
+        }
+        if (!data.filePath && !data.image[0].url) {
+          Toast('无图片')
+          return
+        }
+        console.log('-------------------' + data.filePath)
+        if (data.filePath) {
+          const url = baseUrl + '/mp-api/admin/product/miniAppEditOrCreate?token=' + token
+          console.log('upload url ' + url)
+          wx.uploadFile({
+            url: baseUrl + '/mp-api/admin/product/miniAppEditOrCreate?token=' + token, //上传地址
+            filePath: data.filePath,//上传图片路径
+            name: 'file',
+            formData: data,
+            success: res => {
+              console.info(res);
+              const resData = res.data
+              const resJson = JSON.parse(resData)
+              if (resJson.code !== 0) {
+                Toast(resJson.msg)
+                return
+              }
+              if (!this.form.id) {
+                Toast('新增成功')
+                this.showEditTable = false
+                this.getList()
+              } else {
+                Toast('修改成功')
+                this.showEditTable = false
+                this.getList()
+              }
+            },
+            fail: err => {
+              console.log(err)
+            }
+          })
+        } else {
+          API_PRODUCT.editOrCreate(this.form, token).then(res => {
+            console.log(res)
             if (!this.form.id) {
               Toast('新增成功')
               this.getList()
               this.showEditTable = false
             } else {
               Toast('修改成功')
-              this.form = {}
               this.getList()
               this.showEditTable = false
             }
-          },
-          fail: err => {
-            console.log(err)
-          }
-        })
-      } else {
-        API_PRODUCT.editOrCreate(this.form, token).then(res => {
-          console.log(res)
-          if (!this.form.id) {
-            Toast('新增成功')
-            this.getList()
-            this.showEditTable = false
-          } else {
-            Toast('修改成功')
-            this.form = {}
-            this.getList()
-            this.showEditTable = false
-          }
-        })
+          })
 
-      }
+        }
+
+      }).catch(err => {
+        console.log('this.$refs.form.validate.err')
+        console.log(err)
+      })
     },
     onClickLeft() {
       history.back()

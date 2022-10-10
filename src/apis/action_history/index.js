@@ -1,9 +1,9 @@
 import request from "../request";
 
 
-export function get_list() {
+export function get_list(page) {
   return request({
-    url: `/mp-api/action_history/list`,
+    url: `/mp-api/action_history/list?page=`+page,
     method: 'get',
   });
 }

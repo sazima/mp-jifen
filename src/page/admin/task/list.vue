@@ -156,6 +156,7 @@ export default {
             })
                 .then(res => {
                   Toast('删除成功')
+                  this.showEditTable = false
                   this.getList()
                 })
           })
@@ -166,7 +167,6 @@ export default {
         API_TASK.add(this.form)
             .then(res => {
               Toast('新增成功')
-              this.form = {}
               this.getList()
               this.showEditTable = false
             })
@@ -175,7 +175,6 @@ export default {
         API_TASK.edit(this.form)
             .then(res => {
               Toast('修改成功')
-              this.form = {}
               this.getList()
               this.showEditTable = false
             })

@@ -110,7 +110,7 @@
 <script>
 import Tabbar from '@/page/tabbar/Index.vue'
 import Plate from '@/page/Plate/index.vue'
-import { getUserInfo, setToken, cleanToken } from '../../utils/authUtils'
+import { getUserInfo, setToken, cleanToken, getUserDetail, setUserDetail } from '../../utils/authUtils'
 import API_USER from '@/apis/user'
 import Clipboard from 'clipboard';
 import { Toast, Dialog } from 'vant';
@@ -168,9 +168,16 @@ export default {
       }
     },
     getDetail() {
+      const detail = getUserDetail()
+      if (detail) {
+        this.detailData = detail
+      }
       API_USER.detail()
           .then(res => {
-            this.detailData = res
+            if (this.detailData !== res) {
+              this.detailData = res
+              setUserDetail(res)
+            }
           })
     },
     showPartnerButton(e) {

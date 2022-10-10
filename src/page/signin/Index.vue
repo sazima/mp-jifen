@@ -47,6 +47,7 @@ import Tabbar from '@/page/tabbar/Index.vue'
 import Plate from '@/page/Plate/index.vue'
 import { Dialog, Toast } from 'vant'
 import API_TASK from '@/apis/task'
+import { getTaskList, setTaskList } from '../../utils/authUtils'
 
 export default {
   name: 'Index',
@@ -66,15 +67,20 @@ export default {
     }
   },
   beforeMount() {
+    this.getTaskFromCache()
     this.getTaskList()
     this.requestSubscribeMessage()
   },
   methods: {
+    getTaskFromCache() {
+      this.signInList = getTaskList()
+    },
     getTaskList() {
       API_TASK.list()
           .then(res => {
             console.log(res)
             this.signInList = res
+            setTaskList(this.signInList)
           })
     },
     sigin(item) {
