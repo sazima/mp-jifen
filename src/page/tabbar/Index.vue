@@ -16,7 +16,7 @@ export default {
   name: 'Index',
   data() {
     return {
-      active: 0,
+      active: '/signin',
       list: [
         {
           text: '赚积分',
@@ -50,7 +50,8 @@ export default {
 
   },
   mounted() {
-    this.active = this.$route.path
+    console.log('this.$route.path', this.$route.path);
+    this.active = this.$route.path === '/' ? '/signin' : this.$route.path
   },
   watch: {
     "$route.path"(value) {

@@ -78,9 +78,13 @@ export default {
       }],
     }
   },
-  beforeMount() {
+  mounted() {
     this.getListFromCache()
     this.getList()
+    window.addEventListener('wxshow', this.getList)
+  },
+  destroyed() {
+    window.removeEventListener('wxshow', this.getList)
   },
   methods: {
     getListFromCache() {
@@ -236,7 +240,7 @@ export default {
 
         &-integer {
           text-decoration: line-through;
-          font-family: @font-family-price-integer;
+          font-family: Avenir-Heavy, PingFang SC, Helvetica Neue, Arial, sans-serif;
         }
       }
     }

@@ -25,6 +25,7 @@ module.exports = {
     },
     app: {
         backgroundTextStyle: 'dark',
+        navigationStyle:"default",
         navigationBarTextStyle: 'white',
         navigationBarTitleText: '爱情积分',
     },

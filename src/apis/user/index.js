@@ -8,6 +8,14 @@ export function login(data) {
   });
 }
 
+export function getUserDialog() {
+  return request({
+    url: `/mp-api/dialog/get`,
+    method: 'get'
+  });
+}
+
+
 export function loginMiniApp(data) {
   return request({
     url: `/mp-api/user/loginMiniApp`,
@@ -57,5 +65,6 @@ export default {
   switchAccount,
   loginMiniApp,
   getPartnerDetail,
-  bind
+  bind,
+  getUserDialog
 }

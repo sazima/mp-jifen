@@ -8,7 +8,7 @@
             class="sigin-swiper-item"
             @click=""
         >
-          <van-image class="sigin-swiper-item-img" fit="cover" :src="item.url" :alt="item.title" />
+          <van-image class="sigin-swiper-item-img" fit="cover" :src="item.url" :alt="item.title"/>
         </van-swipe-item>
       </van-swipe>
     </div>
@@ -45,17 +45,18 @@
 <script>
 import Tabbar from '@/page/tabbar/Index.vue'
 import Plate from '@/page/Plate/index.vue'
-import { Dialog, Toast } from 'vant'
+import {Dialog, Toast} from 'vant'
 import API_TASK from '@/apis/task'
-import { getTaskList, setTaskList } from '../../utils/authUtils'
+import {getTaskList, setTaskList} from '../../utils/authUtils'
 
 export default {
   name: 'Index',
-  components: { Tabbar, Plate },
+  components: {Tabbar, Plate},
   data() {
     return {
       listLoading: false,
       listEmptyText: 'no ',
+      onRequest: false,  // 是否正在请求列表中
       signInList: [],
       brandList: [{
         id: 204167,
@@ -66,22 +67,33 @@ export default {
       }],
     }
   },
-  beforeMount() {
+  mounted() {
     this.getTaskFromCache()
     this.getTaskList()
     this.requestSubscribeMessage()
+    window.addEventListener('wxshow', this.getTaskList)
+  },
+  beforeDestroy() {
+    window.removeEventListener('wxshow', this.getTaskList)
   },
   methods: {
     getTaskFromCache() {
       this.signInList = getTaskList()
     },
     getTaskList() {
+      if (this.onRequest) {
+        return
+      }
+      this.onRequest = true
       API_TASK.list()
           .then(res => {
             console.log(res)
             this.signInList = res
             setTaskList(this.signInList)
-          })
+            this.onRequest = false
+          }).catch(err => {
+        this.onRequest = false
+      })
     },
     sigin(item) {
       const id = item.id
@@ -96,7 +108,8 @@ export default {
     requestSubscribeMessage() {
       wx.requestSubscribeMessage({
         tmplIds: ['yttNwZWULn5E1xDDY8cZJ16eExEQ_gdAe3ywBfPh8Bs'],
-        success (res) { }
+        success(res) {
+        }
       })
     }
   },

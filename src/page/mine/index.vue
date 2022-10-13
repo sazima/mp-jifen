@@ -112,8 +112,8 @@ import Tabbar from '@/page/tabbar/Index.vue'
 import Plate from '@/page/Plate/index.vue'
 import { getUserInfo, setToken, cleanToken, getUserDetail, setUserDetail } from '../../utils/authUtils'
 import API_USER from '@/apis/user'
-import Clipboard from 'clipboard';
 import { Toast, Dialog } from 'vant';
+import { getUserDialog } from '../../apis/user'
 
 export default {
   name: 'index',
@@ -139,8 +139,29 @@ export default {
   },
   beforeMount() {
     this.getDetail()
+    this.getDialog()
+    window.addEventListener('wxshow', this.getDetail)
+  },
+  beforeDestroy() {
+    window.removeEventListener('wxshow', this.getDetail)
   },
   methods: {
+    getDialog() {
+      API_USER.getUserDialog().then(res => {
+        if (null === res) {
+          return
+        }
+        const title = res.title
+        const msg = res.message
+        Dialog.alert({
+          title: title,
+          messageAlign: 'left',
+          theme: 'round',
+          message: msg
+        }).then(() => {
+        })
+      })
+    },
     clientMain() {
       console.log('clientMain')
       if (!this.detailData.image) {
@@ -214,11 +235,14 @@ export default {
         } else {
           Dialog.alert({
             title: '提示',
+            messageAlign: 'left',
+            theme: 'round',
             message: '绑定对象后:\n' +
-                '1.您添加的[商品]将只会出现在您对象[兑换]列表中\n' +
-                '2.您添加的[任务]会只出现在您对象的[赚积分]列表中\n' +
+                '1.您添加的[商品]会展示在您对象[积分兑换]列表中\n' +
+                '2.您添加的[任务]会展示在您对象的[赚积分]列表中\n' +
                 '3.[发现]页将展示您和您对象的动态\n' +
-                '4.同时您对象添加的[商品]和[任务]也会出现在您的列表中'
+                '4.同时您对象添加的[商品]和[任务]也会展示在您的列表中\n' +
+                '5.暂时还没有做解绑情侣关系的按钮, 等我有空的时候再做啦!! 如有疑问请加微信 Silence6561'
           }).then(() => {
             this.showShareCode = true
           })

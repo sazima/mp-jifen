@@ -15,7 +15,7 @@ const isOptimize = true // 是否压缩业务代码，开发者工具可能无�
 
 // const  VUE_APP_BASE_URL = 'https://t.wktadmin.com:11111'
 const  VUE_APP_BASE_URL = 'https://iot.liuxianyu.cn'
-// const  VUE_APP_BASE_URL = 'http://192.168.1.11:8084'
+// const  VUE_APP_BASE_URL = 'http://192.168.9.224:8084'
 
 module.exports = {
   mode: 'production',

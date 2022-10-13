@@ -61,7 +61,10 @@ export default {
   mounted() {
     this.getListFromCache()
     this.getList()
-
+    window.addEventListener('wxshow', this.getList)
+  },
+  destroyed() {
+    window.removeEventListener('wxshow', this.getList)
   },
   methods: {
     getListFromCache(){

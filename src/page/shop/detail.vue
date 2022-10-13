@@ -36,35 +36,35 @@
 <!--    <van-goods-action-icon icon="shop-o" text="店铺" @click="onClickIcon" />-->
     <van-goods-action>
       <van-goods-action-icon icon="thumb-circle-o" text="首页" to="/shop" replace />
-      <van-goods-action-button type="danger" text="兑换" @click="showExchange()" style="color: #fff" />
+      <van-goods-action-button type="danger" text="兑换" @click="buy" style="color: #fff" />
     </van-goods-action>
 <!--    <Sku v-model:show="skuShow" :sku="sku" :initial-sku="initialSku" @confirm="onSkuConfirm" />-->
 
-    <van-sku
-        v-model="skuShow"
-        stepper-title="我要买"
-        :sku="skuData.sku"
-        :goods="skuData.goods"
-        reset-stepper-on-hide
-        :initial-sku="skuData.initialSku"
-    >
-      <!-- 自定义 sku-header-price -->
-      <template #sku-header-price="props">
-        <div class="van-sku__goods-price">
-      <span class="van-sku__price-symbol">积分</span
-      ><span class="van-sku__price-num">{{ props.price }}</span>
-        </div>
-      </template>
+<!--    <van-sku-->
+<!--        v-model="skuShow"-->
+<!--        stepper-title="我要买"-->
+<!--        :sku="skuData.sku"-->
+<!--        :goods="skuData.goods"-->
+<!--        reset-stepper-on-hide-->
+<!--        :initial-sku="skuData.initialSku"-->
+<!--    >-->
+<!--      &lt;!&ndash; 自定义 sku-header-price &ndash;&gt;-->
+<!--      <template #sku-header-price="props">-->
+<!--        <div class="van-sku__goods-price">-->
+<!--      <span class="van-sku__price-symbol">积分</span-->
+<!--      ><span class="van-sku__price-num">{{ props.price }}</span>-->
+<!--        </div>-->
+<!--      </template>-->
 
-      <!-- 自定义 sku actions -->
-      <template #sku-actions="props">
-        <div class="van-sku-actions">
-          <van-button square size="large" type="warning" @click="onSkuConfirm">
-            积分兑换
-          </van-button>
-        </div>
-      </template>
-    </van-sku>
+<!--      &lt;!&ndash; 自定义 sku actions &ndash;&gt;-->
+<!--      <template #sku-actions="props">-->
+<!--        <div class="van-sku-actions">-->
+<!--          <van-button square size="large" type="warning" @click="onSkuConfirm">-->
+<!--            积分兑换-->
+<!--          </van-button>-->
+<!--        </div>-->
+<!--      </template>-->
+<!--    </van-sku>-->
 
 
   </div>
@@ -153,22 +153,37 @@ export default {
       })
 
     },
-    showExchange() {
-      this.skuShow = true
-    },
-    onSkuConfirm(item) {
-      const id = this.$route.query.id
-      console.log(this.skuData.initialSku.selectedNum);
-      API_PRODUCT.exchange({
-        productId: id,
-        count: this.skuData.initialSku.selectedNum
+
+    buy() {
+      Dialog.confirm({
+        message: '是否花费' + this.skuData.sku.price + "积分兑换" + this.product.productName
+      }).then(res => {
+        const id = this.$route.query.id
+        API_PRODUCT.exchange({
+          productId: id,
+          count: this.skuData.initialSku.selectedNum
+        })
+            .then(res => {
+              Toast("兑换成功")
+              this.skuShow = false
+              this.getGoodsDetail()
+            })
+
       })
-          .then(res => {
-            Toast("兑换成功")
-            this.skuShow = false
-            this.getGoodsDetail()
-          })
-    }
+    },
+    // onSkuConfirm(item) {
+    //   const id = this.$route.query.id
+    //   console.log(this.skuData.initialSku.selectedNum);
+    //   API_PRODUCT.exchange({
+    //     productId: id,
+    //     count: this.skuData.initialSku.selectedNum
+    //   })
+    //       .then(res => {
+    //         Toast("兑换成功")
+    //         this.skuShow = false
+    //         this.getGoodsDetail()
+    //       })
+    // }
   }
 }
 </script>
@@ -204,7 +219,7 @@ export default {
     align-items: center;
     margin-right: 8px;
     font-size: 16px;
-    color: var(--brand-color);
+    color: #ff5179;
 
     &-symbol {
       font-size: 14px;
@@ -214,7 +229,7 @@ export default {
     &-integer {
       font-size: 22px;
       font-weight: bold;
-      font-family: @font-family-price-integer;
+      font-family: Avenir-Heavy, PingFang SC, Helvetica Neue, Arial, sans-serif;
     }
   }
 
@@ -225,7 +240,7 @@ export default {
     margin-right: 8px;
     font-size: 12px;
     line-height: 18px;
-    color: var(--gray-color-6);
+    color: #969799;
 
     &-label {
       margin-right: 4px;
@@ -233,7 +248,7 @@ export default {
 
     &-integer {
       text-decoration: line-through;
-      font-family: @font-family-price-integer;
+      font-family: Avenir-Heavy, PingFang SC, Helvetica Neue, Arial, sans-serif;
     }
   }
 
@@ -259,7 +274,7 @@ export default {
 
   &-brief {
     margin-top: 4px;
-    color: var(--gray-color-6);
+    color: #969799;
     font-size: 12px;
     word-break: break-all;
   }
@@ -277,7 +292,7 @@ export default {
   &-item {
     flex: 1;
     font-size: 12px;
-    color: var(--gray-color-6);
+    color: #969799;
 
     &:last-child {
       text-align: right;
@@ -291,7 +306,7 @@ export default {
   padding: 0 10px;
   padding-top: 10px;
   overflow: hidden;
-  color: va(--color-gray-8);
+  color: #323233;
   font-size: 16px;
   line-height: 1.5;
   text-align: left;
@@ -319,12 +334,12 @@ export default {
 
 .cell-bar {
   display: flex;
-  color: var(--gray-color-8);
+  color: #323233;
 
   &-title {
     flex-shrink: 0;
     margin-right: 12px;
-    color: var(--gray-color-6);
+    color: #969799;
   }
 
   &-txt {
