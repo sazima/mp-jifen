@@ -1,11 +1,11 @@
 <template>
-  <div >
+  <div>
     <div class="action-messages">
       <van-list
-          :finished="true"
+          :finished=finished
           :finished-text="finished_text"
       >
-        <div v-for="item in messages" :key="item.sn" class="action-message-item">
+        <div v-for="(item, messageIndex) in messages" :key="messageIndex" class="action-message-item">
           <div class="action-message-item-box">
             <div class="action-user">
               <div :id="item.sn" class="action-identicon">
@@ -13,7 +13,7 @@
               </div>
             </div>
             <div class="action-msg-container">
-              <div class="action-name">{{ item.nickName || '空昵称' }}</div>
+              <div class="action-name">{{ item.nickName }}</div>
               <div class="action-content">
                 <div class="action-texts">{{ item.description }}</div>
                 <div class="action-imgs" v-if="item.image && item.image.length">
@@ -28,15 +28,33 @@
                   </template>
                 </div>
               </div>
-              <div class="action-desc">
-                <div>
+              <div class="action-desc" style="margin-top: 10px">
+                <div style="height: 10px; line-height: 10px">
                   {{ item.time }}
+                </div>
+                <div style="height: 10px; position: relative" v-show="false">
+                  <div class="action-popover-action" v-show="showIndex === messageIndex" style="display: inline-block; height: 10px; position: absolute; right: 10px; width: 142px; bottom: 4px">
+                    <div class="action-star" @click="toStar" style="display: inline-block">
+                      <van-icon name="like-o"/>&nbsp;赞
+                    </div>
+                    <div class="action-line" style="display: inline">&nbsp;&nbsp;|&nbsp;&nbsp;</div>
+                    <div class="action-comment" @click="toComment" style="display: inline-block">
+                      <van-icon
+                          name="smile-comment-o"
+                          size="16px"
+                      />&nbsp;评论
+                    </div>
+                  </div>
+                  <div class="action-support" @click="clickSupport(messageIndex)" style="display: inline-block; height: 10px; position: absolute; right: 10px; width: 20px; bottom: 0px" v-show="false">
+                    <span>·&nbsp;·</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </van-list>
+      <van-button style="display: block;margin: 0 auto; width: 50%" v-show="!finished" @click="clickMore">点击查看更多</van-button>
     </div>
     <!-- 底部导航栏 -->
     <Tabbar/>
@@ -54,8 +72,14 @@ export default {
   components: { Tabbar },
   data() {
     return {
-      finished_text: '仅展示近3个月的数据',
+      finished_text: '小程序端暂时仅展示近3个月的数据',
+      finished: true,
+      page: 1,
+      pageSize: 40,
       messages: [],
+      allMessages: [],
+      showIndex: -1,
+      loading: false
     }
   },
   mounted() {
@@ -67,8 +91,15 @@ export default {
     window.removeEventListener('wxshow', this.getList)
   },
   methods: {
-    getListFromCache(){
+    getListFromCache() {
       this.messages = getActionList()
+    },
+    clickSupport(index) {
+      if (this.showIndex !== index) {
+        this.showIndex = index
+      } else {
+        this.showIndex = -1
+      }
     },
     getList() {
       API_ACTION.get_list()
@@ -76,23 +107,34 @@ export default {
             if (res.length === 0) {
               this.finished_text = '暂无数据'
             }
-            this.messages = res
-            setActionList(this.messages.slice(0, 21))
-            // if (res.length >= 20) {
-            //   this.messages = res.slice(0, 21)
-            //   setActionList(this.messages)
-            //   setTimeout(() => {
-            //     this.messages = res
-            //     console.log(this.messages)
-            //   }, 200)
-            // } else {
-            //   this.messages = res
-            //   setActionList(this.messages)
-            // }
+            this.page = 1
+            this.messages = res.slice(0, this.pageSize)
+            setActionList(this.messages.slice(0, 20))
+            this.allMessages = res
+            if (this.messages.length === this.allMessages.length) {
+              this.finished = true
+            } else {
+              this.finished = false
+
+            }
           })
+    },
+    clickMore() {
+      this.page += 1
+      const start = (this.page - 1) * this.pageSize
+      this.messages = this.allMessages.slice(0, start + this.pageSize)
+      if (this.messages.length === this.allMessages.length) {
+        this.finished = true
+      }
     },
     getBeforeNowCount(item_time) {
       return item_time
+    },
+    onLoad () {
+      console.log('on load ')
+      setTimeout(() => {
+        this.loading = true
+      }, 500)
     },
     showImg(imgs, option) {
       ImagePreview({

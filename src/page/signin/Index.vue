@@ -47,7 +47,9 @@ import Tabbar from '@/page/tabbar/Index.vue'
 import Plate from '@/page/Plate/index.vue'
 import {Dialog, Toast} from 'vant'
 import API_TASK from '@/apis/task'
-import {getTaskList, setTaskList} from '../../utils/authUtils'
+import API_BRAND from '@/apis/brand'
+import { getBannerList, getTaskList, setBannerList, setTaskList } from '../../utils/authUtils'
+import { defaultBanner } from '../../utils/consant'
 
 export default {
   name: 'Index',
@@ -58,18 +60,15 @@ export default {
       listEmptyText: 'no ',
       onRequest: false,  // 是否正在请求列表中
       signInList: [],
-      brandList: [{
-        id: 204167,
-        linkUrl: '',
-        url: 'https://i.imgtg.com/2022/10/05/pWHcx.png',
-        type: 'image',
-        title: 'b',
-      }],
+      brandList: [],
     }
   },
   mounted() {
+    this.getBanderListCache()
     this.getTaskFromCache()
+
     this.getTaskList()
+    this.getBnnerList()
     this.requestSubscribeMessage()
     window.addEventListener('wxshow', this.getTaskList)
   },
@@ -77,6 +76,19 @@ export default {
     window.removeEventListener('wxshow', this.getTaskList)
   },
   methods: {
+    getBanderListCache() {
+      const bannder = getBannerList()
+      this.brandList = bannder
+    },
+    getBnnerList() {
+      API_BRAND.list().then(res => {
+        console.log('-----------', res)
+        if (res.length > 0) {
+          setBannerList(res)
+          this.brandList = res
+        }
+      })
+    },
     getTaskFromCache() {
       this.signInList = getTaskList()
     },
@@ -181,7 +193,7 @@ export default {
 
       .sigin-list-item-bd-action {
         font-size: 10px;
-        color: var(--red-color);
+        color: #ee0a24; // var(--red-color);
         border: 1px solid #ee0a24;
         border-radius: 15px;
         padding: 5px 10px;

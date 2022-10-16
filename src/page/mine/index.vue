@@ -110,16 +110,17 @@
 <script>
 import Tabbar from '@/page/tabbar/Index.vue'
 import Plate from '@/page/Plate/index.vue'
-import { getUserInfo, setToken, cleanToken, getUserDetail, setUserDetail } from '../../utils/authUtils'
+import { getUserInfo, setToken, cleanToken, getUserDetail, setUserDetail, getThemeInfoIndex } from '../../utils/authUtils'
 import API_USER from '@/apis/user'
 import { Toast, Dialog } from 'vant';
-import { getUserDialog } from '../../apis/user'
+import { themeInfoList } from '../../utils/consant'
 
 export default {
   name: 'index',
   components: { Tabbar, Plate },
   data() {
     return {
+      themeInfo: null,
       detailData: {},
       showPartner: false,
       showShareCode: false,
@@ -133,7 +134,7 @@ export default {
         { icon: 'shop-o', title: '商品', path: '/admin/productList' },
         { icon: 'like-o', title: '积分任务', path: '/admin/taskList' },
         { icon: 'orders-o', title: '申请列表', path: '/admin/apply' },
-        // { icon: 'newspaper-o', title: '海报', path: '/admin/brand' },
+        // { icon: 'newspaper-o', title: '设置', path: '/admin/setting' },
       ]
     }
   },
@@ -141,9 +142,21 @@ export default {
     this.getDetail()
     this.getDialog()
     window.addEventListener('wxshow', this.getDetail)
+    // this.themeInfo = themeInfoList(getThemeInfoIndex())
   },
   beforeDestroy() {
     window.removeEventListener('wxshow', this.getDetail)
+  },
+  computed: {
+    brandColor() {
+      return this.themeInfo.colors.brandColor
+    },
+    viceColor() {
+      return this.themeInfo.colors.viceColor
+    },
+    viceTextColor(){
+      return this.themeInfo.colors.viceTextColor
+    }
   },
   methods: {
     getDialog() {

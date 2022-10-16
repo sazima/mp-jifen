@@ -14,6 +14,8 @@ import AdminProductList from '../../page/admin/product/list'
 import AdminTask from '../../page/admin/task/list'
 import AdminApply from '../../page/admin/apply/index'
 import AdminBrand from '../../page/admin/brand/index'
+import AdminSetting from '../../page/admin/setting/index'
+import AdminTheme from '../../page/admin/theme/index'
 import ActionHistory from '../../page/action_history/Index'
 
 import Vant from 'vant'
@@ -77,7 +79,16 @@ const router = new Router({
       name: 'adminApply',
       component: AdminApply,
     },
-
+    {
+      path: '/admin/setting',
+      name: 'adminSetting',
+      component: AdminSetting,
+    },
+    {
+      path: '/admin/theme',
+      name: 'adminTheme',
+      component: AdminTheme,
+    },
     {
       path: '/admin/brand',
       name: 'adminBrand',

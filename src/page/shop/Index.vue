@@ -58,8 +58,9 @@
 <script>
 import Tabbar from '@/page/tabbar/Index.vue'
 import Plate from '@/page/Plate/index.vue'
-import { getProductList, setProductList } from '../../utils/authUtils'
+import { getBannerList, getProductList, setBannerList, setProductList } from '../../utils/authUtils'
 import API_PRODUCT from '../../apis/product/index'
+import API_BRAND from '@/apis/brand'
 
 export default {
   name: 'Index',
@@ -80,18 +81,33 @@ export default {
   },
   mounted() {
     this.getListFromCache()
+    this.getBanderListCache()
     this.getList()
+    this.getBnnerList()
     window.addEventListener('wxshow', this.getList)
   },
   destroyed() {
     window.removeEventListener('wxshow', this.getList)
   },
   methods: {
+    getBanderListCache() {
+      const bannder = getBannerList()
+      this.brandList = bannder
+    },
     getListFromCache() {
       this.productList = getProductList()
     },
     onGoodClicked(id) {
       this.$router.push({path: '/shopDetail', query: {id}});
+    },
+    getBnnerList() {
+      API_BRAND.list().then(res => {
+        console.log('-----------', res)
+        if (res.length > 0) {
+          setBannerList(res)
+          this.brandList = res
+        }
+      })
     },
     getList() {
       API_PRODUCT.list()
